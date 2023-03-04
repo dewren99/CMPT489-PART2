@@ -412,7 +412,14 @@ Theorem while_true : forall b c,
     <{ while b do c end }>
     <{ while true do skip end }>.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b c Hb. split; intros H.
+  - apply while_true_nonterm in H.
+    + inversion H.
+    + apply Hb.
+  - apply while_true_nonterm in H.
+    + inversion H.
+    + intros state. reflexivity.
+Qed.
 (** [] *)
 
 (** A more interesting fact about [while] commands is that any number
@@ -478,7 +485,26 @@ Theorem assign_aequiv : forall (X : string) (a : aexp),
   aequiv <{ X }> a ->
   cequiv <{ skip }> <{ X := a }>.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold aequiv; intros.
+  split; intros.
+  - inversion H0; subst.
+    assert (st' = t_update st' X (st' X)).
+    + apply functional_extensionality. intros.
+      rewrite t_update_same.
+      reflexivity.
+    + rewrite H1 at 2.
+      apply E_Asgn.
+      rewrite <- H.
+      reflexivity.
+  - inversion H0; subst.
+    assert (st = t_update st X (st X)).
+    + apply functional_extensionality. intros.
+      rewrite t_update_same.
+      reflexivity.
+    + rewrite H1 at 2. rewrite <- H. 
+      rewrite <- H1. rewrite t_update_same.
+      apply E_Skip.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (equiv_classes) *)
@@ -542,8 +568,14 @@ Definition prog_i : com :=
        X := Y + 1
      end }>.
 
-Definition equiv_classes : list (list com)
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition equiv_classes : list (list com) :=
+  [
+    [prog_f; prog_g]; 
+    [prog_c; prog_h];
+    [prog_a; prog_d]; 
+    [prog_b; prog_e];
+    [prog_i]
+  ].
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_equiv_classes : option (nat*string) := None.
@@ -745,7 +777,14 @@ Theorem CIf_congruence : forall b b' c1 c1' c2 c2',
   cequiv <{ if b then c1 else c2 end }>
          <{ if b' then c1' else c2' end }>.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  split; intros.
+  - inversion H2; subst.
+  + apply E_IfTrue. rewrite <- H. apply H8.
+    apply H0. apply H8.
+  + apply E_IfFalse. rewrite <- H. apply H5.
+    apply H1. apply H5.
+  
+  
 (** [] *)
 
 (** For example, here are two equivalent programs and a proof of their
