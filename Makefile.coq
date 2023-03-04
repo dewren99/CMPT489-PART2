@@ -7,7 +7,7 @@
 ##         #     GNU Lesser General Public License Version 2.1          ##
 ##         #     (see LICENSE file for the text of the license)         ##
 ##########################################################################
-## GNUMakefile for Coq 8.15.0
+## GNUMakefile for Coq 8.15.2
 
 # For debugging purposes (must stay here, don't move below)
 INITIAL_VARS := $(.VARIABLES)
@@ -44,7 +44,7 @@ HASNATDYNLINK     := $(COQMF_HASNATDYNLINK)
 OCAMLWARN         := $(COQMF_WARN)
 
 Makefile.coq.conf: 
-	coq_makefile -Q . PLF -o Makefile.coq Maps.v Imp.v Preface.v Equiv.v Hoare.v Hoare2.v HoareAsLogic.v Smallstep.v Types.v Stlc.v StlcProp.v MoreStlc.v Sub.v Typechecking.v Records.v References.v RecordSub.v Norm.v PE.v Postscript.v Bib.v LibTactics.v UseTactics.v UseAuto.v MapsTest.v ImpTest.v PrefaceTest.v EquivTest.v HoareTest.v Hoare2Test.v HoareAsLogicTest.v SmallstepTest.v TypesTest.v StlcTest.v StlcPropTest.v MoreStlcTest.v SubTest.v TypecheckingTest.v RecordsTest.v ReferencesTest.v RecordSubTest.v NormTest.v PETest.v PostscriptTest.v BibTest.v LibTacticsTest.v UseTacticsTest.v UseAutoTest.v
+	/snap/coq-prover/30/coq-platform/2022-04-1/bin/coq_makefile COQBIN = /snap/coq-prover/30/coq-platform/2022-04-1/bin/ -Q . PLF -o Makefile.coq Maps.v Imp.v Preface.v Equiv.v Hoare.v Hoare2.v HoareAsLogic.v Smallstep.v Types.v Stlc.v StlcProp.v MoreStlc.v Sub.v Typechecking.v Records.v References.v RecordSub.v Norm.v PE.v Postscript.v Bib.v LibTactics.v UseTactics.v UseAuto.v MapsTest.v ImpTest.v PrefaceTest.v EquivTest.v HoareTest.v Hoare2Test.v HoareAsLogicTest.v SmallstepTest.v TypesTest.v StlcTest.v StlcPropTest.v MoreStlcTest.v SubTest.v TypecheckingTest.v RecordsTest.v ReferencesTest.v RecordSubTest.v NormTest.v PETest.v PostscriptTest.v BibTest.v LibTacticsTest.v UseTacticsTest.v UseAutoTest.v
 
 # This file can be created by the user to hook into double colon rules or
 # add any other Makefile code he may need
@@ -257,7 +257,7 @@ COQDOCLIBS?=$(COQLIBS_NOML)
 # The version of Coq being run and the version of coq_makefile that
 # generated this makefile
 COQ_VERSION:=$(shell $(COQC) --print-version | cut -d " " -f 1)
-COQMAKEFILE_VERSION:=8.15.0
+COQMAKEFILE_VERSION:=8.15.2
 
 # COQ_SRC_SUBDIRS is for user-overriding, usually to add
 # `user-contrib/Foo` to the includes, we keep COQCORE_SRC_SUBDIRS for
