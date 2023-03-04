@@ -175,7 +175,17 @@ Theorem skip_right : forall c,
     <{ c ; skip }>
     c.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros c st st'.
+  split; intros.
+  - (* -> *)
+    inversion H. subst.
+    inversion H5. subst.
+    assumption.
+  - (* <- *)
+    apply E_Seq with st'.
+    assumption.
+    apply E_Skip.
+Qed.
 (** [] *)
 
 (** Similarly, here is a simple equivalence that optimizes [if]
@@ -263,7 +273,17 @@ Theorem if_false : forall b c1 c2,
     <{ if b then c1 else c2 end }>
     c2.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b c1 c2 Hb.
+  split; intros.
+  - inversion H. subst. 
+    + unfold bequiv in Hb. simpl in Hb.
+      rewrite Hb in H5. discriminate. 
+    + assumption.
+  - apply E_IfFalse; try assumption.
+     unfold bequiv in Hb. simpl in Hb.
+      apply Hb.
+Qed.
+  
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (swap_if_branches)
@@ -276,7 +296,20 @@ Theorem swap_if_branches : forall b c1 c2,
     <{ if b then c1 else c2 end }>
     <{ if ~ b then c2 else c1 end }>.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros; split; intros; inversion H; subst.
+    - apply E_IfFalse.
+      + simpl. rewrite H5. simpl. reflexivity.
+      + apply H6.
+    - apply E_IfTrue. subst.
+      + simpl. rewrite H5. simpl. reflexivity.
+      + subst. apply H6.
+    - apply E_IfFalse.
+      + simpl in H5. apply negb_true_iff in H5. apply H5.
+      + apply H6.
+    - apply E_IfTrue.
+      + simpl in H5. apply negb_false_iff in H5. apply H5.
+      + apply H6.
+Qed.
 (** [] *)
 
 (** For [while] loops, we can give a similar pair of theorems.  A loop
