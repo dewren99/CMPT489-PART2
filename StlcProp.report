@@ -1,0 +1,57 @@
+STLCProp.progress' (advanced, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+STLCProp.substitution_preserves_typing_from_typing_ind (advanced, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+STLCProp.subject_expansion_stlc (standard, manually graded)
+Score: Ungraded / 2.0
+
+STLCProp.unique_types (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+STLCProp.free_in_context (standard, automatically graded)
+Score: 0.0 / 2.0
+Reason: Admitted proof.
+
+STLCProp.stlc_variation1 (standard, manually graded)
+Score: Ungraded / 2.0
+
+STLCProp.stlc_variation2 (standard, manually graded)
+Score: Ungraded / 2.0
+
+STLCProp.stlc_variation3 (standard, manually graded)
+Score: Ungraded / 2.0
+
+STLCArith.subst (standard, automatically graded)
+Score: 0.0 / 10.0
+Reason: Admitted proof.
+
+STLCArith.weakening (standard, automatically graded)
+Score: 0.0 / 6.0
+Reason: Admitted proof.
+
+STLCArith.preservation (standard, automatically graded)
+Score: 0.0 / 6.0
+Reason: Admitted proof.
+
+STLCArith.progress (standard, automatically graded)
+Score: 0.0 / 6.0
+Reason: Admitted proof.
+
+Points possible - standard: 41
+Points possible - advanced: 47
+
+   ###########################
+   ##### Grading Results #####
+   ###########################
+
+   Standard:  0.0 / 33.0 so far
+                and  8.0 ungraded
+
+   Advanced:  0.0 / 39.0 so far
+                and  8.0 ungraded
+

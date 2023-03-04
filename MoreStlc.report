@@ -1,0 +1,34 @@
+STLCExtended.subst (standard, automatically graded)
+Score: 3.0 / 3.0
+
+STLCExtended.step (standard, automatically graded)
+Score: 3.0 / 3.0
+
+STLCExtended.has_type (standard, automatically graded)
+Score: 3.0 / 3.0
+
+STLCExtended.progress (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+STLCExtended.substitution_preserves_typing (standard, automatically graded)
+Score: 0.0 / 2.0
+Reason: Admitted proof.
+
+STLCExtended.preservation (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+Points possible - standard: 17
+Points possible - advanced: 17
+
+   ###########################
+   ##### Grading Results #####
+   ###########################
+
+   Standard:  9.0 / 17.0 so far
+                and  0.0 ungraded
+
+   Advanced:  9.0 / 17.0 so far
+                and  0.0 ungraded
+

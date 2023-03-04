@@ -1,0 +1,38 @@
+STLCRef.compact_update (standard, manually graded)
+Score: Ungraded / 2.0
+
+STLCRef.type_safety_violation (standard, manually graded)
+Score: Ungraded / 2.0
+
+STLCRef.cyclic_store (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+STLCRef.store_not_unique (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+STLCRef.preservation_informal (standard, manually graded)
+Score: Ungraded / 3.0
+
+STLCRef.RefsAndNontermination.factorial (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+STLCRef.RefsAndNontermination.factorial_type (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+Points possible - standard: 19
+Points possible - advanced: 19
+
+   ###########################
+   ##### Grading Results #####
+   ###########################
+
+   Standard:  0.0 / 12.0 so far
+                and  7.0 ungraded
+
+   Advanced:  0.0 / 12.0 so far
+                and  7.0 ungraded
+

@@ -1,0 +1,33 @@
+if_minus_plus_correct (standard, automatically graded)
+Score: 0.0 / 2.0
+Reason: Admitted proof.
+
+slow_assignment (standard, automatically graded)
+Score: 0.0 / 2.0
+Reason: Admitted proof.
+
+factorial_correct (advanced, automatically graded)
+Score: 0.0 / 6.0
+Reason: Admitted proof.
+
+minimum_correct (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+two_loops (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+Points possible - standard: 10
+Points possible - advanced: 16
+
+   ###########################
+   ##### Grading Results #####
+   ###########################
+
+   Standard:  0.0 / 10.0 so far
+                and  0.0 ungraded
+
+   Advanced:  0.0 / 16.0 so far
+                and  0.0 ungraded
+

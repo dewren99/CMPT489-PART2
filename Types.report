@@ -1,0 +1,55 @@
+TM.some_term_is_stuck (standard, automatically graded)
+Score: 0.0 / 2.0
+Reason: Admitted proof.
+
+TM.value_is_nf (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+TM.progress (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+TM.finish_progress_informal (advanced, manually graded)
+Score: Ungraded / 3.0
+
+TM.preservation (standard, automatically graded)
+Score: 0.0 / 2.0
+Reason: Admitted proof.
+
+TM.finish_preservation_informal (advanced, manually graded)
+Score: Ungraded / 3.0
+
+TM.preservation' (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+TM.subject_expansion (standard, automatically graded)
+Score: 0.0 / 3.0
+Reason: Admitted proof.
+
+TM.variation1 (standard, manually graded)
+Score: Ungraded / 2.0
+
+TM.variation2 (standard, manually graded)
+Score: Ungraded / 2.0
+
+TM.remove_pred0 (standard, manually graded)
+Score: Ungraded / 1.0
+
+TM.prog_pres_bigstep (advanced, manually graded)
+Score: Ungraded / 6.0
+
+Points possible - standard: 21
+Points possible - advanced: 33
+
+   ###########################
+   ##### Grading Results #####
+   ###########################
+
+   Standard:  0.0 / 16.0 so far
+                and  5.0 ungraded
+
+   Advanced:  0.0 / 16.0 so far
+                and 17.0 ungraded
+

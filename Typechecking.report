@@ -1,0 +1,24 @@
+TypecheckerExtensions.type_check_defn (standard, manually graded)
+Score: Ungraded / 6.0
+
+TypecheckerExtensions.type_checking_sound (standard, automatically graded)
+Score: 0.0 / 2.0
+Reason: Admitted proof.
+
+TypecheckerExtensions.type_checking_complete (standard, automatically graded)
+Score: 0.0 / 2.0
+Reason: Admitted proof.
+
+Points possible - standard: 10
+Points possible - advanced: 10
+
+   ###########################
+   ##### Grading Results #####
+   ###########################
+
+   Standard:  0.0 /  4.0 so far
+                and  6.0 ungraded
+
+   Advanced:  0.0 /  4.0 so far
+                and  6.0 ungraded
+
