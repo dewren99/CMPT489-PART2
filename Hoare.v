@@ -358,7 +358,8 @@ Theorem hoare_post_true : forall (P Q : Assertion) c,
   (forall st, Q st) ->
   {{P}} c {{Q}}.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q c H st st' H1 H2. apply H.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (hoare_pre_false) *)
@@ -370,7 +371,11 @@ Theorem hoare_pre_false : forall (P Q : Assertion) c,
   (forall st, ~ (P st)) ->
   {{P}} c {{Q}}.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q c H st st' H1 H2.
+  unfold not in H.
+  apply H in H2.
+  inversion H2.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -678,7 +683,18 @@ Proof. (* FILL IN HERE *) Admitted.
 
 *)
 
-(* FILL IN HERE *)
+Example hoare_asgn_wrong :
+    {{ True }}
+      X := 5
+    {{ X = 10 }}.
+Proof.
+(* It is formal because reading it from left to right makes it sounds
+  correct. Precondition X is 10, X is assigned to 5, post condition
+  is True. However, when you read it correctly, it is false. Precondition
+  is True, X is assigned to 5. Postcondition shows X is 10. However, X
+  was assigned to 5. *)
+Abort.
+    
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_hoare_asgn_wrong : option (nat*string) := None.
