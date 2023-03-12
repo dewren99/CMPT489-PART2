@@ -969,22 +969,23 @@ Definition if_minus_plus_dec :=
   <{
   {{True}}
   if (X <= Y) then
-              {{ FILL_IN_HERE }} ->>
-              {{ FILL_IN_HERE }}
+              {{ True /\ X <= Y }} ->>
+              {{ (Y - X) + X = Y }}
     Z := Y - X
-              {{ FILL_IN_HERE }}
+              {{ Z + X = Y }}
   else
-              {{ FILL_IN_HERE }} ->>
-              {{ FILL_IN_HERE }}
+              {{ True /\ ~(X <= Y) }} ->>
+              {{ X + Z = X + Z }}
     Y := X + Z
-              {{ FILL_IN_HERE }}
+              {{ Y = X + Z }}
   end
   {{ Y = X + Z}} }>.
 
 Theorem if_minus_plus_correct :
   outer_triple_valid if_minus_plus_dec.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  verify.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (div_mod_outer_triple_valid)
@@ -1221,23 +1222,26 @@ Example slow_assignment_dec (m : nat) : decorated :=
   <{
     {{ X = m }}
       Y := 0
-                    {{ FILL_IN_HERE }} ->>
-                    {{ FILL_IN_HERE }} ;
+                    {{ X = m /\ Y = 0 }} ->>
+                    {{ X + Y = m }} ;
       while X <> 0 do
-                    {{ FILL_IN_HERE }} ->>
-                    {{ FILL_IN_HERE }}
+                    {{ X <> 0 /\ X + Y = m }} ->>
+                    {{ (X - 1) + (Y + 1) = m }}
          X := X - 1
-                    {{ FILL_IN_HERE }} ;
+                    {{ X + (Y + 1) = m }} ;
          Y := Y + 1
-                    {{ FILL_IN_HERE }}
+                    {{ X + Y = m }}
       end
-    {{ FILL_IN_HERE }} ->>
+    {{ Y = m /\ X = 0 }} ->>
     {{ Y = m }}
   }>.
 
 Theorem slow_assignment : forall m,
   outer_triple_valid (slow_assignment_dec m).
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  verify.
+Qed.
+  
 (** [] *)
 
 (* ================================================================= *)
