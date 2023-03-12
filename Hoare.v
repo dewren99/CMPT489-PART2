@@ -2239,7 +2239,14 @@ Notation "{{ P }}  c  {{ Q }}" :=
 Theorem assert_assume_differ : exists (P:Assertion) b (Q:Assertion),
        ({{P}} assume b {{Q}})
   /\ ~ ({{P}} assert b {{Q}}).
-(* FILL IN HERE *) Admitted.
+Proof.
+  exists (fun st => True).
+  exists BFalse.
+  exists (fun st => False).
+  split.
+  - intros st st' H1 H2. inversion H1. subst. exists st. inversion H0.
+  - intros contra. unfold hoare_triple in contra.
+    Admitted.
 
 (** Then prove that any triple for an [assert] also works when
     [assert] is replaced by [assume]. *)
@@ -2248,7 +2255,15 @@ Theorem assert_implies_assume : forall P b Q,
      ({{P}} assert b {{Q}})
   -> ({{P}} assume b {{Q}}).
 Proof.
-(* FILL IN HERE *) Admitted.
+  unfold hoare_triple.
+  intros P b Q H st r Hce Hpre.
+  destruct (H st r) as [st' [Hce' HQ]].
+  - inversion Hce; subst. apply E_AssertTrue. apply H1.
+  - assumption.
+  - exists st'. split.
+    + apply Hce'.
+    + assumption.
+Qed.
 
 (** Next, here are proofs for the old hoare rules adapted to the new
     semantics.  You don't need to do anything with these. *)
@@ -2362,7 +2377,21 @@ Qed.
     to prove a simple program correct.  Name your rules [hoare_assert]
     and [hoare_assume]. *)
 
-(* FILL IN HERE *)
+Theorem hoare_assert : forall P b Q,
+  {{P}} assert b {{Q}}.
+Proof.
+  intros P b Q st st' Hce Hpre.
+  inversion Hce; subst.
+  - eexists. split. reflexivity.
+  Admitted.
+
+Theorem hoare_assume : forall P b Q,
+  {{P}} assume b {{Q}}.
+Proof.
+  intros P b Q st st' Hce Hpre.
+  inversion Hce; subst.
+  - exists st. split; try reflexivity.
+Admitted.
 
 (** Use your rules to prove the following triple. *)
 
