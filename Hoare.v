@@ -693,7 +693,7 @@ Proof.
   is True. However, when you read it correctly, it is false. Precondition
   is True, X is assigned to 5. Postcondition shows X is 10. However, X
   was assigned to 5. *)
-Abort.
+Admitted.
     
 
 (* Do not modify the following line: *)
@@ -1654,7 +1654,7 @@ Proof.
     + assn_auto''.
   - eapply hoare_consequence_pre.
     + assn_auto''.
-    Abort.
+    Admitted.
 (** [] *)
 
 End If1.
