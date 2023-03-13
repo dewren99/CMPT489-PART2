@@ -2251,8 +2251,12 @@ Proof.
   exists (fun st => False).
   split.
   - intros st st' H1 H2. inversion H1. subst. exists st. inversion H0.
-  - unfold hoare_triple. unfold not.
-    Admitted.
+  - unfold hoare_triple. unfold not. 
+    specialize (E_AssertFalse empty_st BFalse). assn_auto''.
+    specialize H0 with (st:=empty_st) (r:=RError).
+    destruct H0. apply E_AssertFalse. simpl. reflexivity. reflexivity.
+    apply H0.
+Qed.
 
 (** Then prove that any triple for an [assert] also works when
     [assert] is replaced by [assume]. *)
