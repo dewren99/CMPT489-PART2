@@ -1546,16 +1546,13 @@ Hint Constructors ceval : core.
 Example if1true_test :
   empty_st =[ if1 X = 0 then X := 1 end ]=> (X !-> 1).
 Proof.
-  apply E_If1True.
-  - reflexivity.
-  - apply E_Asgn. reflexivity.
+  eauto.
 Qed.
 
 Example if1false_test :
   (X !-> 2) =[ if1 X = 0 then X := 1 end ]=> (X !-> 2).
 Proof.
-  apply E_If1False.
-  - reflexivity.
+  eauto.
 Qed.
 (** [] *)
 
@@ -1648,13 +1645,22 @@ Lemma hoare_if1_good :
     end
   {{ X = Z }}.
 Proof.
-  apply hoare_if1.
-  - eapply hoare_consequence_pre.
-    + assn_auto''. apply hoare_asgn. 
-    + assn_auto''.
-  - eapply hoare_consequence_pre.
-    + assn_auto''.
-    Admitted.
+  eapply hoare_if1.
+  intros st st' H1 H2.
+  inversion H1; subst.
+  simpl. destruct H2. assumption.
+  unfold not. 
+  unfold hoare_triple. 
+  intros. inversion H0.
+  inversion H; subst. destruct H1.
+  unfold bassn in *. simpl in H2.
+  destruct (beq_nat (st' Y) 0) eqn:X.
+  (* 
+    reference: https://github.com/fabriceleal/Software-Foundations-Solutions/blob/a6fcbe4c0711a90cd364c075b2a8c1edfd3b30cc/Hoare.v#L1243
+  *)
+  apply eqb_eq in X. assn_auto''.
+  apply False_ind. apply H2. simpl. reflexivity. 
+Qed.
 (** [] *)
 
 End If1.
@@ -2073,13 +2079,14 @@ Proof. eauto. Qed.
     [havoc_pre], and prove that the resulting rule is correct. *)
 
 Definition havoc_pre (X : string) (Q : Assertion) (st : total_map nat) : Prop
-  := forall n, Q (X !-> n ; st).
+  := forall n, st =[ (havoc X) ]=> (X !-> n ; st) -> Q (X !-> n ; st).
 
 Theorem hoare_havoc : forall (Q : Assertion) (X : string),
   {{ havoc_pre X Q }} havoc X {{ Q }}.
 Proof.
-  intros Q X. unfold hoare_triple, havoc_pre. intros st st' Hce Hpre.
-  inversion Hce; subst. apply Hpre. Qed.
+  intros Q X st st' Hce Hpre.
+  inversion Hce; subst. apply Hpre. apply Hce.
+ Qed.
 
 (** [] *)
 
@@ -2098,8 +2105,7 @@ Theorem havoc_post : forall (P : Assertion) (X : string),
 Proof.
   intros P X. eapply hoare_consequence_pre.
   - apply hoare_havoc.
-  - unfold havoc_pre. intros st H. unfold assn_sub.
-    exists (st X).
+  - intros st Hst n. exists (st X).
     Admitted.
 
 (** [] *)
@@ -2245,7 +2251,7 @@ Proof.
   exists (fun st => False).
   split.
   - intros st st' H1 H2. inversion H1. subst. exists st. inversion H0.
-  - intros contra. unfold hoare_triple in contra.
+  - unfold hoare_triple. unfold not.
     Admitted.
 
 (** Then prove that any triple for an [assert] also works when
@@ -2402,7 +2408,7 @@ Example assert_assume_example:
     assert (X = 2)
   {{True}}.
 Proof.
-(* FILL IN HERE *) Admitted.
+Admitted.
 
 End HoareAssertAssume.
 (** [] *)
