@@ -1197,11 +1197,7 @@ Theorem eval__multistep : forall t n,
     includes [-->]. *)
 
 Proof.
-  intros.
-  induction H.
-  - apply multi_refl.
-  (* - eapply multi_trans. 2: { apply multi_R. ...Con... } *)
-Admitted.
+  (* FILL IN HERE *) Admitted.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (eval__multistep_inf)

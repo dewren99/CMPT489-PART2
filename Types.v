@@ -196,6 +196,11 @@ Definition stuck (t : tm) : Prop :=
 
 Hint Unfold stuck : core.
 
+Theorem is_stuck : exists tm, stuck tm.
+Proof.
+  exists <{iszero true}>. unfold stuck.
+Abort.
+
 (** **** Exercise: 2 stars, standard (some_term_is_stuck) *)
 Example some_term_is_stuck :
   exists t, stuck t.
@@ -468,6 +473,9 @@ Proof.
       + (* ST_IfFalse *) assumption.
       + (* ST_If *) apply T_If; try assumption.
         apply IHHT1; assumption.
+(* STARTS *)
+    - inversion HE; subst.
+      + apply T_Succ. apply IHHT. assumption.
     (* FILL IN HERE *) Admitted.
 (** [] *)
 
