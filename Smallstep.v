@@ -462,7 +462,16 @@ Inductive step : tm -> tm -> Prop :=
 Theorem step_deterministic :
   deterministic step.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold deterministic. intros x y1 y2 Hy1 Hy2.
+  generalize dependent y2.
+  induction Hy1; intros y2 Hy2;
+  inversion Hy2; subst; try solve_by_invert.
+  - reflexivity.
+  - apply IHHy1 in H2. rewrite H2. reflexivity.
+  - inversion Hy1; subst; try solve_by_invert.
+  - inversion H3; subst; try solve_by_invert.
+  - apply IHHy1 in H4. rewrite H4. reflexivity.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
