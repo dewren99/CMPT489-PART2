@@ -817,7 +817,8 @@ Inductive step : tm -> tm -> Prop :=
   | ST_If : forall t1 t1' t2 t3,
       t1 --> t1' ->
       test t1 t2 t3 --> test t1' t2 t3
-  (* FILL IN HERE *)
+  | ST_ShortCircuit : forall t1 t2,
+      test t1 t2 t2 --> t2
 
   where " t '-->' t' " := (step t t').
 
@@ -832,7 +833,8 @@ Definition bool_step_prop4 :=
 Example bool_step_prop4_holds :
   bool_step_prop4.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply ST_ShortCircuit.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard, optional (properties_of_altered_step)
