@@ -1011,7 +1011,8 @@ Qed.
 Lemma test_multistep_2:
   C 3 -->* C 3.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply multi_refl.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard, optional (test_multistep_3) *)
@@ -1020,7 +1021,8 @@ Lemma test_multistep_3:
    -->*
       P (C 0) (C 3).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply multi_refl.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (test_multistep_4) *)
@@ -1035,7 +1037,21 @@ Lemma test_multistep_4:
         (C 0)
         (C (2 + (0 + 3))).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply multi_step with (P(C 0)(P(C 2)(C (0 + 3)))).
+  { 
+    apply ST_Plus2.
+    apply v_const. simpl. 
+    apply ST_Plus2. apply v_const.
+    apply ST_PlusConstConst. 
+  }
+  apply multi_step with (P(C 0)(C (2 + (0 + 3)))).
+  { 
+    apply ST_Plus2. apply v_const. 
+    apply ST_PlusConstConst. 
+  }
+  apply multi_refl.
+Qed.
+
 (** [] *)
 
 (* ================================================================= *)
@@ -1102,7 +1118,13 @@ Lemma multistep_congr_2 : forall v1 t2 t2',
      t2 -->* t2' ->
      P v1 t2 -->* P v1 t2'.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros v1 t2 t2' Hval H.
+  induction H.
+  - apply multi_refl.
+  - apply multi_step with (P v1 y).
+    + apply ST_Plus2. assumption. apply H.
+    + apply IHmulti.
+Qed.
 (** [] *)
 
 (** With these lemmas in hand, the main proof is a straightforward
@@ -1213,8 +1235,15 @@ Proof.
   intros.
   induction H.
   - apply multi_refl.
-  (* - eapply multi_trans. 2: { apply multi_R. ...Con... } *)
-Admitted.
+  - apply multi_trans with (P (C v1) t2).
+    + apply multistep_congr_1. apply IHeval1.
+    + apply multi_trans with (P (C v1) (C v2)).
+      * apply multistep_congr_2.
+        { apply v_const. }
+        { apply IHeval2. }
+      * apply multi_R. apply ST_PlusConstConst.
+Qed.
+  
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (eval__multistep_inf)
@@ -1238,7 +1267,11 @@ Lemma step__eval : forall t t' n,
      t  ==> n.
 Proof.
   intros t t' n Hs. generalize dependent n.
-  (* FILL IN HERE *) Admitted.
+  induction Hs; intros n Ht'.
+  - inversion Ht'; subst. apply E_Plus. apply E_Const. apply E_Const.
+  - inversion Ht'; subst. apply E_Plus. apply IHHs. assumption. assumption.
+  - inversion Ht'; subst. apply E_Plus. assumption. apply IHHs. assumption.
+Qed.
 (** [] *)
 
 (** The fact that small-step reduction implies big-step evaluation is now
@@ -1254,7 +1287,17 @@ Proof.
 Theorem multistep__eval : forall t t',
   normal_form_of t t' -> exists n, t' = C n /\ t ==> n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros t t' [Hmultistep Hnormal].
+  apply nf_same_as_value in Hnormal.
+  destruct Hnormal as [n].
+  exists n.
+  split. reflexivity.
+  remember (C n) as t' eqn:Heqt'.
+  induction Hmultistep. 
+  - rewrite Heqt' in *. inversion Heqt'. apply E_Const.
+  - eapply step__eval. apply H. apply IHHmultistep. assumption.
+Qed.
+
 (** [] *)
 
 (* ================================================================= *)
