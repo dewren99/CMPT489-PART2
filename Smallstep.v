@@ -1368,16 +1368,47 @@ Inductive step : tm -> tm -> Prop :=
 (** **** Exercise: 3 stars, standard (combined_step_deterministic) *)
 Theorem combined_step_deterministic: (deterministic step) \/ ~ (deterministic step).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  left.
+  unfold deterministic. intros x y1 y2 H1 H2.
+  generalize dependent y2.
+  induction H1; intros y2 H2; 
+  inversion H2; subst; eauto;
+  try solve_by_invert.
+  - apply IHstep in H4. rewrite H4. reflexivity.
+  - inversion H3; subst. try solve_by_invert. inversion H1. inversion H1.
+  - inversion H; subst. try solve_by_invert. inversion H5. inversion H5.
+  - apply IHstep in H6. rewrite H6. reflexivity.
+  - apply IHstep in H5. rewrite H5. reflexivity.
+Qed.
+  
 
 (** [] *)
+
+Theorem strong_progress :
+(forall t, value t \/ (exists t', t --> t')).
+Proof.
+induction t.
+ - left. apply v_const.
+ - destruct IHt1 as [IHt1 | [t1' Ht1']].
+   + destruct IHt2 as [IHt2 | [t2' Ht2']].
+      * right. inversion IHt1; inversion IHt2. 
+        exists (C (n + n0)). apply ST_PlusConstConst.
+Admitted.
+      
+
+Theorem strong_progress_false :
+~ (forall t, value t \/ (exists t', t --> t')).
+Proof.
+Abort.
 
 (** **** Exercise: 3 stars, standard (combined_strong_progress) *)
 Theorem combined_strong_progress :
   (forall t, value t \/ (exists t', t --> t'))
   \/ ~ (forall t, value t \/ (exists t', t --> t')).
 Proof.
-  (* FILL IN HERE *) Admitted.
+left. apply strong_progress.
+Qed.
+
 (** [] *)
 
 End Combined.
@@ -1883,7 +1914,8 @@ Theorem normalize_ex : exists e',
   (P (C 3) (P (C 2) (C 1)))
   -->* e' /\ value e'.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  eexists. split. normalize. eauto.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard, optional (normalize_ex')
