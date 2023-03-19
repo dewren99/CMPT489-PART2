@@ -775,6 +775,7 @@ Definition manual_grade_for_smallstep_bools : option (nat*string) := None.
 Theorem strong_progress_bool : forall t,
   value t \/ (exists t', t --> t').
 Proof.
+left. destruct t.  apply v_tru. apply v_fls.
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
@@ -1384,29 +1385,36 @@ Qed.
 
 (** [] *)
 
-Theorem strong_progress :
+
+Theorem strong_progress_true :
 (forall t, value t \/ (exists t', t --> t')).
 Proof.
 induction t.
  - left. apply v_const.
- - destruct IHt1 as [IHt1 | [t1' Ht1']].
-   + destruct IHt2 as [IHt2 | [t2' Ht2']].
-      * right. inversion IHt1; inversion IHt2. 
-        exists (C (n + n0)). apply ST_PlusConstConst.
-Admitted.
+ - right. destruct IHt1. destruct IHt2. inversion H; inversion H0; subst.
+   + exists (C (n + n0)). apply ST_PlusConstConst.
+   + inversion H. inversion H0. inversion H.
+Abort.
       
 
 Theorem strong_progress_false :
 ~ (forall t, value t \/ (exists t', t --> t')).
 Proof.
-Abort.
+unfold not.
+intros H.
+specialize (H (test (C 0) tru fls)).
+destruct H as [H_val | H_step].
+- inversion H_val.
+- destruct H_step as [t' H_t_step].
+  inversion H_t_step; subst. inversion H3.
+Qed.
 
 (** **** Exercise: 3 stars, standard (combined_strong_progress) *)
 Theorem combined_strong_progress :
   (forall t, value t \/ (exists t', t --> t'))
   \/ ~ (forall t, value t \/ (exists t', t --> t')).
 Proof.
-left. apply strong_progress.
+right. apply strong_progress_false.
 Qed.
 
 (** [] *)
