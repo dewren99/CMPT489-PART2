@@ -596,15 +596,44 @@ Qed.
     and [|- t' \in T], then [|- t \in T]?  If so, prove it.  If
     not, give a counter-example.
 
-    (* FILL IN HERE *)
+    Counter-example:
+    t = <{if 0 then true else false}>
+    t' = <{false}>
+    t --> t' and |- t' \in Bool
+    However, the statement (|- t \in Bool) is false
+    because <{if 0 then true else false}> does not belong in Bool.
 *)
+
+Theorem subject_expansion_part1: 
+(forall t t' T, t --> t' /\ |- t' \in T -> |- t \in T).
+Proof.
+intros t t' T [Hstep Htype].
+generalize dependent T.
+
+induction Hstep; intros T Htype.
+induction Htype; subst; apply T_If; eauto.
+induction t2; subst.
+Admitted.
+
+Theorem subject_expansion_part2: 
+~ (forall t t' T, t --> t' /\ |- t' \in T -> |- t \in T).
+Proof.
+intros H.
+assert (
+  H_example : 
+  <{ if (pred 0) then true else false }> 
+  --> <{ false }> /\ |- <{ false }> \in Bool
+). 
+Admitted.
 
 Theorem subject_expansion:
   (forall t t' T, t --> t' /\ |- t' \in T -> |- t \in T)
   \/
   ~ (forall t t' T, t --> t' /\ |- t' \in T -> |- t \in T).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  right. apply subject_expansion_part2.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (variation1)
@@ -620,11 +649,14 @@ Proof.
    else "becomes false." If a property becomes false, give a
    counterexample.
       - Determinism of [step]
-            (* FILL IN HERE *)
+            remains true
       - Progress
-            (* FILL IN HERE *)
+            becomes false.
+            <{ succ true }> would be stuck
+            because taking a step from succ true 
+            is unknown with current type definitions.
       - Preservation
-            (* FILL IN HERE *)
+            remains true
 *)
 (* Do not modify the following line: *)
 Definition manual_grade_for_variation1 : option (nat*string) := None.
