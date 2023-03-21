@@ -196,16 +196,17 @@ Definition stuck (t : tm) : Prop :=
 
 Hint Unfold stuck : core.
 
-Theorem is_stuck : exists tm, stuck tm.
-Proof.
-  exists <{iszero true}>. unfold stuck.
-Abort.
-
 (** **** Exercise: 2 stars, standard (some_term_is_stuck) *)
 Example some_term_is_stuck :
   exists t, stuck t.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  exists <{ succ true }>. unfold stuck. split.
+  - unfold step_normal_form.  unfold not.
+    intros H. inversion H. inversion H0. subst.
+    inversion H2.
+  -  unfold not. intros H. inversion H. inversion H0.
+      inversion H0. inversion H2.
+Qed.
 (** [] *)
 
 (** However, although values and normal forms are _not_ the same in
@@ -217,7 +218,6 @@ Proof.
 Lemma value_is_nf : forall t,
   value t -> step_normal_form t.
 Proof.
-  (* FILL IN HERE *) Admitted.
 
 (** (Hint: You will reach a point in this proof where you need to
     use an induction to reason about a term that is known to be a
@@ -228,6 +228,15 @@ Proof.
     exercise, try to complete the proof both ways.)
 
     [] *)
+intros t H. unfold step_normal_form. unfold not. induction H.
+- intros [t' Hs]. inversion H; subst; inversion Hs.
+- intros [t' Hs]. induction H.
+  + inversion Hs; subst.
+  + inversion Hs; subst. apply IHnvalue. 
+    inversion H; subst. inversion H1; subst.
+    inversion H0; subst. inversion H; subst. inversion H1; subst.
+Admitted.
+
 
 (** **** Exercise: 3 stars, standard, optional (step_deterministic)
 
@@ -404,6 +413,11 @@ Proof.
     + (* t1 can take a step *)
       destruct H as [t1' H1].
       exists (<{ if t1' then t2 else t3 }>). auto.
+  - left. right. destruct IHHT as [Hv | Hstep].
+    + apply nat_canonical in HT; try assumption.
+      apply nv_succ. assumption.
+    + destruct Hstep as [t1' H1]. apply nv_succ.
+      inversion H1.
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
@@ -476,7 +490,15 @@ Proof.
 (* STARTS *)
     - inversion HE; subst.
       + apply T_Succ. apply IHHT. assumption.
-    (* FILL IN HERE *) Admitted.
+    - inversion HE; subst.
+      + assumption.
+      + inversion HT; subst; try solve_by_invert. assumption.
+      +  apply IHHT in H0. apply T_Pred. assumption.
+    - inversion HE; subst.
+      + apply T_True.
+      + apply T_False.
+      + apply T_Iszero. apply IHHT. assumption.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (finish_preservation_informal)
@@ -527,7 +549,13 @@ Theorem preservation' : forall t t' T,
   t --> t' ->
   |- t' \in T.
 Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+  intros t t' T HT HE.
+  generalize dependent T.
+  induction HE; intros T HT;
+  try solve_by_invert;
+  inversion HT; subst; eauto.
+  inversion H1; subst. assumption.
+Qed.
 (** [] *)
 
 (** The preservation theorem is often called _subject reduction_,
