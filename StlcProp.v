@@ -32,8 +32,9 @@ Lemma canonical_forms_bool : forall t,
   (t = <{true}>) \/ (t = <{false}>).
 Proof.
   intros t HT HVal.
-  destruct HVal; auto.
-  inversion HT.
+  destruct HVal. - inversion HT. - auto. - auto.
+  (* destruct HVal; auto.
+  inversion HT. *)
 Qed.
 
 Lemma canonical_forms_fun : forall t T1 T2,
@@ -195,7 +196,12 @@ Lemma weakening : forall Gamma Gamma' t T,
 Proof.
   intros Gamma Gamma' t T H Ht.
   generalize dependent Gamma'.
-  induction Ht; eauto using includedin_update.
+  induction Ht; try eauto.
+  intros. apply T_Abs. apply IHHt.
+  apply includedin_update. assumption.
+  (* intros Gamma Gamma' t T H Ht.
+  generalize dependent Gamma'.
+  induction Ht; eauto using includedin_update. *)
 Qed.
 
 (** The following simple corollary is what we actually need below. *)
