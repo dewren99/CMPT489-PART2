@@ -459,15 +459,84 @@ Check <{[x:=true] x}>.
 Inductive substi (s : tm) (x : string) : tm -> tm -> Prop :=
   | s_var1 :
       substi s x (tm_var x) s
-  (* FILL IN HERE *)
-.
+  | s_var2 : forall y,
+      x <> y ->
+      substi s x (tm_var y) (tm_var y)
+  | s_abs1 : forall T t,
+      substi s x <{\x:T, t}> <{\x:T, t}>
+  | s_abs2 : forall y T t t',
+      x <> y ->
+      substi s x t t' ->
+      substi s x <{\y:T, t}> <{\y:T, t'}>
+  | s_app : forall t1 t1' t2 t2',
+      substi s x t1 t1' ->
+      substi s x t2 t2' ->
+      substi s x <{t1 t2}> <{t1' t2'}>
+  | s_true :
+      substi s x <{true}> <{true}>
+  | s_false :
+      substi s x <{false}> <{false}>
+  | s_if : forall t1 t1' t2 t2' t3 t3',
+      substi s x t1 t1' ->
+      substi s x t2 t2' ->
+      substi s x t3 t3' ->
+      substi s x <{if t1 then t2 else t3}> <{if t1' then t2' else t3'}>.
 
 Hint Constructors substi : core.
 
 Theorem substi_correct : forall s x t t',
   <{ [x:=s]t }> = t' <-> substi s x t t'.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros s x t t'.
+  split.
+  - generalize dependent t'.
+    induction t; intros t' H; subst; eauto.
+    + destruct (x =? s0)%string eqn:Heq; simpl in *.
+      * apply String.eqb_eq in Heq. subst. simpl.
+        destruct (String.eqb s0 s0) eqn:Heq.
+        --  apply s_var1.
+        -- apply String.eqb_neq in Heq. contradiction.
+      * apply String.eqb_neq in Heq; subst. 
+        destruct (String.eqb x s0) eqn:Heq'.
+        -- apply String.eqb_eq in Heq'. contradiction.
+        -- auto.
+     + simpl. apply s_app. auto. auto.
+     + simpl. destruct (x =? s0)%string eqn:Heq.
+       * apply String.eqb_eq in Heq; subst. apply s_abs1.
+       * apply String.eqb_neq in Heq; subst. auto.
+     + apply s_if; auto.
+   - intros Hsubsti. induction t.
+     + inversion Hsubsti; subst.
+       * simpl. rewrite eqb_refl. reflexivity.
+       * simpl. destruct (x =? s0)%string eqn:Heq.
+          -- apply String.eqb_eq in Heq. contradiction.
+          -- auto.
+
+(*
+     + inversion Hsubsti; subst. simpl. 
+rewrite IHt1.
+
+
+
+     + inversion Hsubsti; subst. simpl. 
+        apply f_equal2.
+        * inversion H1; subst; auto.
+          -- simpl. rewrite eqb_refl. reflexivity.
+          -- simpl. destruct (x =? y0)%string eqn:Heq.
+              ++ apply String.eqb_eq in Heq. contradiction.
+              ++ auto.
+          -- simpl. destruct (String.eqb x x) eqn:Heq; auto.
+              apply String.eqb_neq in Heq. contradiction.
+          -- simpl. destruct (x =? y0)%string eqn:Heq.
+              ++ apply eqb_eq in Heq. contradiction.
+              ++
+
+
+
+ apply s_var1.
+      * apply s_var1. apply String.eqb_eq in Heq. subst. reflexivity.
+*)
+Admitted.
 (** [] *)
 
 (* ================================================================= *)
