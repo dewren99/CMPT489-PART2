@@ -766,7 +766,11 @@ Proof. eauto. Qed.
 
 Example typing_example_1' :
   empty |- \x:Bool, x \in (Bool -> Bool).
-Proof. auto.  Qed.
+Proof. apply T_Abs.
+simple apply T_Var.
+simple apply update_eq.
+Qed.
+(* Proof. auto.  Qed. *)
 
 (** More examples:
 
@@ -780,7 +784,8 @@ Example typing_example_2 :
        \y:Bool->Bool,
           (y (y x)) \in
     (Bool -> (Bool -> Bool) -> Bool).
-Proof. eauto 20. Qed.
+Proof. info_eauto 20. Qed.
+
 
 (** **** Exercise: 2 stars, standard, optional (typing_example_2_full)
 
