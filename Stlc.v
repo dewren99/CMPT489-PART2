@@ -484,6 +484,17 @@ Inductive substi (s : tm) (x : string) : tm -> tm -> Prop :=
 
 Hint Constructors substi : core.
 
+Lemma substi_part2 : forall s x t1 t2,
+substi s x t1 t2 -> <{ [x := s] t1 }> = t2.
+Proof.
+  intros s x t1 t2 H.
+  induction H; simpl; eauto; try (rewrite String.eqb_refl; auto).
+  - apply String.eqb_neq in H. rewrite H. auto.
+  - apply eqb_neq in H. rewrite H. rewrite IHsubsti. reflexivity.
+  - rewrite IHsubsti1. rewrite IHsubsti2. reflexivity.
+  - rewrite IHsubsti1. rewrite IHsubsti2. rewrite IHsubsti3. reflexivity.
+Qed.
+
 Theorem substi_correct : forall s x t t',
   <{ [x:=s]t }> = t' <-> substi s x t t'.
 Proof.
@@ -505,38 +516,8 @@ Proof.
        * apply String.eqb_eq in Heq; subst. apply s_abs1.
        * apply String.eqb_neq in Heq; subst. auto.
      + apply s_if; auto.
-   - intros Hsubsti. induction t.
-     + inversion Hsubsti; subst.
-       * simpl. rewrite eqb_refl. reflexivity.
-       * simpl. destruct (x =? s0)%string eqn:Heq.
-          -- apply String.eqb_eq in Heq. contradiction.
-          -- auto.
-
-(*
-     + inversion Hsubsti; subst. simpl. 
-rewrite IHt1.
-
-
-
-     + inversion Hsubsti; subst. simpl. 
-        apply f_equal2.
-        * inversion H1; subst; auto.
-          -- simpl. rewrite eqb_refl. reflexivity.
-          -- simpl. destruct (x =? y0)%string eqn:Heq.
-              ++ apply String.eqb_eq in Heq. contradiction.
-              ++ auto.
-          -- simpl. destruct (String.eqb x x) eqn:Heq; auto.
-              apply String.eqb_neq in Heq. contradiction.
-          -- simpl. destruct (x =? y0)%string eqn:Heq.
-              ++ apply eqb_eq in Heq. contradiction.
-              ++
-
-
-
- apply s_var1.
-      * apply s_var1. apply String.eqb_eq in Heq. subst. reflexivity.
-*)
-Admitted.
+   - apply substi_part2.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
