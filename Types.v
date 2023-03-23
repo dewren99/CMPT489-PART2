@@ -671,7 +671,14 @@ Definition manual_grade_for_variation1 : option (nat*string) := None.
 
    Which of the above properties become false in the presence of
    this rule?  For each one that does, give a counter-example.
-            (* FILL IN HERE *)
+
+  - Determinism becomes false.
+  ST_IfTrue states <{ if true then t2 else t3 }> would reduce to t2.
+  However, the ST_Funny1 is reducing it to t3, causing non-determinism.
+  
+  - Preservation remains true
+  - Determinism remains true
+
 *)
 (* Do not modify the following line: *)
 Definition manual_grade_for_variation2 : option (nat*string) := None.
@@ -749,7 +756,11 @@ Definition manual_grade_for_variation2 : option (nat*string) := None.
     achieve this simply by removing the rule from the definition of
     [step]?  Would doing so create any problems elsewhere?
 
-(* FILL IN HERE *)
+    - Removing ST_Pred0 would make the predecessor of [<{0}>]
+    undefined. However, progress becomes false because
+    <{ pred 0 }> of type Nat would not be able to take a step
+    anymore.
+
 *)
 (* Do not modify the following line: *)
 Definition manual_grade_for_remove_pred0 : option (nat*string) := None.
