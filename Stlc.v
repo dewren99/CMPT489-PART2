@@ -877,7 +877,12 @@ Example typing_example_3 :
                (y (x z)) \in
       T.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  eexists.
+  eapply T_Abs. eapply T_Abs. eapply T_Abs.  eapply T_App.
+  eapply T_Var. reflexivity. eapply T_App. eapply T_Var. reflexivity.
+  eapply T_Var. reflexivity.
+Qed.
+
 (** [] *)
 
 (** We can also show that some terms are _not_ typable.  For example,
