@@ -710,13 +710,19 @@ Lemma step_example5 :
        <{idBBBB idBB idB}>
   -->* idB.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  eapply multi_step. 
+    apply ST_App1. apply ST_AppAbs. auto.
+  eapply multi_step. apply ST_AppAbs. auto.
+  simpl. apply multi_refl.
+Qed.
 
 Lemma step_example5_with_normalize :
        <{idBBBB idBB idB}>
   -->* idB.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  normalize.
+Qed.
+
 (** [] *)
 
 (* ################################################################# *)
