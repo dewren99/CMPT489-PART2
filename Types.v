@@ -219,6 +219,7 @@ Lemma value_is_nf : forall t,
   value t -> step_normal_form t.
 Proof.
 
+
 (** (Hint: You will reach a point in this proof where you need to
     use an induction to reason about a term that is known to be a
     numeric value.  This induction can be performed either over the
@@ -226,17 +227,20 @@ Proof.
     proof goes through in either case, but you will find that one way
     is quite a bit shorter than the other.  For the sake of the
     exercise, try to complete the proof both ways.)
-
     [] *)
-intros t H. unfold step_normal_form. unfold not. induction H.
-- intros [t' Hs]. inversion H; subst; inversion Hs.
-- intros [t' Hs]. induction H.
-  + inversion Hs; subst.
-  + inversion Hs; subst. apply IHnvalue. 
-    inversion H; subst. inversion H1; subst.
-    inversion H0; subst. inversion H; subst. inversion H1; subst.
-Admitted.
 
+
+intros t H. unfold step_normal_form. unfold normal_form. unfold not.
+destruct H as [H | H].
+
+(* bvalue *)
+- destruct H. inversion 1 as [t' Hcontra].  inversion Hcontra.
+  inversion 1 as [t' Hcontra]. inversion Hcontra.
+(* nvalue *)
+- induction H.
+  + inversion 1 as [t' Hcontra]. inversion Hcontra.
+  + inversion 1 as [t1' Hcontra]. inversion Hcontra; subst. eauto.
+Qed.
 
 (** **** Exercise: 3 stars, standard, optional (step_deterministic)
 
