@@ -354,6 +354,29 @@ From PLF Require Import Smallstep.
     execution.  (Use informal syntax.  No need to prove formally that
     the application gets stuck.)
 
+    interface Student {
+      name
+      age
+      gpa
+      ...
+    }
+    interface Person {
+      name
+      age
+    }
+    function f(student: Student): Nat {
+      return student.gpa;
+    }
+    function g(callback: Person -> Nat): Nat {
+      Student newStudent = new Student();
+      return callback(newStudent);
+    }
+    g(f);
+
+    The g(f) call will be stuck because f is expecting a student object
+    with the gpa:Nat field, but Person object
+    doesn't have that field.
+
 *)
 
 (* Do not modify the following line: *)
@@ -469,6 +492,29 @@ That is, state how [Top -> (Top -> Student)] compares with each
 of the five types above. It may be unrelated to some of them.  
 *)
 
+(*
+
+1. [Person -> Student]
+2. [Student -> Person]
+3. [Student -> Top]
+4. [Top -> Student]
+5. [Top]
+
+[Person -> Student] and [Top->Top->Student] are unrelated.
+[Student -> Person] and [Top->Top->Student] are unrelated.
+[Student -> Top] and [Top->Top->Student] are unrelated.
+[Top -> Student] is sub type of [Top->Top->Student].
+[Top] is sub type of [Top->Top->Student].
+
+1. [Person -> Student]
+2. [Student -> Person]
+3. [Student -> Top]
+4. [Top -> Student]
+5. [Top->Top->Student]
+6. [Top]
+
+**)
+
 (* Do not modify the following line: *)
 Definition manual_grade_for_subtype_order : option (nat*string) := None.
 (** [] *)
@@ -481,27 +527,33 @@ Definition manual_grade_for_subtype_order : option (nat*string) := None.
       forall S T,
           S <: T  ->
           S->S   <:  T->T
+      true
 
       forall S,
            S <: A->A ->
            exists T,
               S = T->T  /\  T <: A
+      false
 
       forall S T1 T2,
            (S <: T1 -> T2) ->
            exists S1 S2,
-              S = S1 -> S2  /\  T1 <: S1  /\  S2 <: T2 
+              S = S1 -> S2  /\  T1 <: S1  /\  S2 <: T2
+      true
 
       exists S,
            S <: S->S 
+      false
 
       exists S,
-           S->S <: S  
+           S->S <: S
+      true
 
       forall S T1 T2,
            S <: T1*T2 ->
            exists S1 S2,
-              S = S1*S2  /\  S1 <: T1  /\  S2 <: T2  
+              S = S1*S2  /\  S1 <: T1  /\  S2 <: T2
+      true
 *)
 
 (* Do not modify the following line: *)
@@ -512,30 +564,38 @@ Definition manual_grade_for_subtype_instances_tf_2 : option (nat*string) := None
 
     Which of the following statements are true, and which are false?
     - There exists a type that is a supertype of every other type.
+      true
 
     - There exists a type that is a subtype of every other type.
+      false
 
     - There exists a pair type that is a supertype of every other
       pair type.
+      true
 
     - There exists a pair type that is a subtype of every other
       pair type.
+      false
 
     - There exists an arrow type that is a supertype of every other
       arrow type.
+      true
 
     - There exists an arrow type that is a subtype of every other
       arrow type.
+      false
 
     - There is an infinite descending chain of distinct types in the
       subtype relation---that is, an infinite sequence of types
       [S0], [S1], etc., such that all the [Si]'s are different and
       each [S(i+1)] is a subtype of [Si].
+      false
 
     - There is an infinite _ascending_ chain of distinct types in
       the subtype relation---that is, an infinite sequence of types
       [S0], [S1], etc., such that all the [Si]'s are different and
       each [S(i+1)] is a supertype of [Si].
+      false
 
 *)
 
@@ -554,6 +614,22 @@ Definition manual_grade_for_subtype_concepts_tf : option (nat*string) := None.
          ~(T = Bool \/ exists n, T = Base n) ->
          exists S,
             S <: T  /\  S <> T
+*)
+
+(*
+
+T is one of the following types if it is not Base or Bool:
+- Top
+  + Then T is type Top and S can be any type.
+- Record
+  + Then T is type [T1...Tn] and S can be [T1...T(n - 1)] sub type.
+- Pair
+  + Then T is type [T1 * T2] and S can be [T1 * Top] sub type.
+- Function
+  + Then T is type [T1 -> T2] and S can be [T1 -> Top] sub type.
+
+Therefore, the statement is true.
+
 *)
 
 (* Do not modify the following line: *)
