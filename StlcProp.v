@@ -428,6 +428,11 @@ Theorem not_subject_expansion:
   exists t t' T, t --> t' /\ (empty |- t' \in T) /\ ~ (empty |- t \in T).
 Proof.
   (* Write "exists <{ ... }>" to use STLC notation. *)
+  eexists. eexists. eexists.
+  split.
+  - apply ST_AppAbs. apply v_abs.
+  - split. 
+    +
   (* FILL IN HERE *) Admitted.
 
 (* Do not modify the following line: *)
@@ -469,7 +474,14 @@ Theorem unique_types : forall Gamma e T T',
   Gamma |- e \in T' ->
   T = T'.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros Gamma e T T' Ht1.
+  generalize dependent T'.
+  induction Ht1; intros T' Ht2; inversion Ht2; subst; try reflexivity.
+  - rewrite H2 in H. inversion H. reflexivity.
+  - apply IHHt1 in H4. subst. reflexivity.
+  - apply IHHt1_1 in H2. inversion H2; subst. reflexivity.
+  - apply IHHt1_2 in H5. assumption.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -598,7 +610,9 @@ Proof.
   generalize dependent T.
   induction H as [| | |y T1 t1 H H0 IHappears_free_in| | |];
          intros; try solve [inversion H0; eauto].
-  (* FILL IN HERE *) Admitted.
+- inversion H1; subst. apply IHappears_free_in in H7.
+rewrite update_neq in H7; assumption || auto.
+Qed.
 (** [] *)
 
 (** From the [free_in_context] lemma, it immediately follows that any
