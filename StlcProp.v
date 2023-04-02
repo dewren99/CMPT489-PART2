@@ -727,11 +727,18 @@ and the following typing rule:
     false, give a counterexample.
 
       - Determinism of [step]
-(* FILL IN HERE *)
+becomes false
+the term <{ (\x:Bool, x) true }> can take a step more than one way.
+Using ST_AppAbs: <{ (\x:Bool, x) true }> --> <{ true }>
+Using ST_Zap: <{ (\x:Bool, x) true }> --> <{ zap }>
+
       - Progress
-(* FILL IN HERE *)
+remains true
+
       - Preservation
-(* FILL IN HERE *)
+becomes false
+the term <{ true }> can become <{ true }> --> <{ zap }>
+According to the T_Zap rule
 *)
 
 (* Do not modify the following line: *)
@@ -755,11 +762,17 @@ Definition manual_grade_for_stlc_variation1 : option (nat*string) := None.
     false, give a counterexample.
 
       - Determinism of [step]
-(* FILL IN HERE *)
+Becomes false.
+Consider a anonymous function that takes Bool and returns the same Bool.
+According to ST_Foo1, the same anonymous function can reduce to foo.
+This behaviour violates Determinism.
       - Progress
-(* FILL IN HERE *)
+Remains true.
       - Preservation
-(* FILL IN HERE *)
+Becomes false.
+Consider a anonymous function that takes Bool and returns the same Bool.
+According to ST_Foo1, the same anonymous function can reduce to foo.
+foo is not same type as Bool type, Preservation rule is violated.
 *)
 
 (* Do not modify the following line: *)
@@ -775,10 +788,13 @@ Definition manual_grade_for_stlc_variation2 : option (nat*string) := None.
     false, give a counterexample.
 
       - Determinism of [step]
-(* FILL IN HERE *)
+Remains true.
       - Progress
-(* FILL IN HERE *)
+Becomes false. The term <{t1 t2}>  would get stuck even if t1 can take
+a step (t1 --> t1') because ST_App1 rule (<{t1 t2}> --> <{t1' t2}>) is
+removed.
       - Preservation
+Remains true.
 (* FILL IN HERE *)
 *)
 
@@ -963,11 +979,24 @@ Coercion tm_const : nat >-> tm.
 Reserved Notation "'[' x ':=' s ']' t" (in custom stlc at level 20, x constr).
 
 (** **** Exercise: 5 stars, standard (STLCArith.subst) *)
-Fixpoint subst (x : string) (s : tm) (t : tm) : tm
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint subst (x : string) (s : tm) (t : tm) : tm :=
+  match t with
+  | tm_var y => if String.eqb x y then s else t
+  |tm_app t1 t2 => tm_app (subst x s t1) (subst x s t2)
+  | tm_abs y T t1 => if String.eqb x y then t else tm_abs y T (subst x s t1)
+  | tm_const n => tm_const n
+  | tm_succ t1 => tm_succ (subst x s t1)
+  | tm_pred t1 => tm_pred (subst x s t1)
+  | tm_mult t1 t2 => tm_mult (subst x s t1) (subst x s t2)
+  | tm_if0 t1 t2 t3 => tm_if0 (subst x s t1) (subst x s t2) (subst x s t3)
+end.
+
 
 Inductive value : tm -> Prop :=
-  (* FILL IN HERE *)
+  | v_abs : forall x T t,
+  value <{ \x : T, t }>
+  | v_const : forall n,
+  value <{ n }>
 .
 
 Hint Constructors value : core.
@@ -975,7 +1004,37 @@ Hint Constructors value : core.
 Reserved Notation "t '-->' t'" (at level 40).
 
 Inductive step : tm -> tm -> Prop :=
-  (* FILL IN HERE *)
+| ST_App1 : forall t1 t1' t2,
+t1 --> t1' ->
+<{ t1 t2 }> --> <{ t1' t2 }>
+| ST_App2 : forall v1 t2 t2',
+value v1 ->
+t2 --> t2' ->
+<{ v1 t2 }> --> <{ v1 t2' }>
+| ST_Succ : forall t1 t1',
+t1 --> t1' ->
+<{ succ t1 }> --> <{ succ t1' }>
+| ST_Pred : forall t1 t1',
+t1 --> t1' ->
+<{ pred t1 }> --> <{ pred t1' }>
+| ST_PredNat : forall n:nat,
+<{ pred n }> --> <{ {n - 1} }>
+| ST_Mult : forall t1 t1' t2,
+t1 --> t1' ->
+<{ t1 * t2 }> --> <{ t1' * t2 }>
+| ST_MultNat1 : forall n1 t2 t2',
+t2 --> t2' ->
+<{ n1 * t2 }> --> <{ n1 * t2' }>
+| ST_MultNatNat : forall n1 n2,
+<{ n1 * n2 }> --> <{ n1 * n2 }>
+| ST_If0 : forall t1 t1' t2 t3,
+t1 --> t1' ->
+<{ if0 t1 then t2 else t3 }> --> <{ if0 t1' then t2 else t3 }>
+| ST_If0_Zero : forall t2 t3,
+<{ if0 0 then t2 else t3 }> --> t2
+| ST_If0_NonZero : forall n t2 t3,
+n <> 0 ->
+<{ if0 n then t2 else t3 }> --> t3
 where "t '-->' t'" := (step t t').
 
 Notation multistep := (multi step).
