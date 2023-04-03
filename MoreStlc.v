@@ -1132,14 +1132,24 @@ Fixpoint subst (x : string) (s : tm) (t : tm) : tm :=
   | <{unit}> => <{unit}>
 
   (* Complete the following cases. *)
-
+ 
   (* pairs *)
-  (* FILL IN HERE *)
+  | <{(t1, t2)}> =>
+  <{( [x:=s] t1, [x:=s] t2 )}>
+  | tm_fst t1 =>
+      <{ [x:=s] t1 }>
+  | tm_snd t2 =>
+      <{ [x:=s] t2 }>
+(*
   (* let *)
-  (* FILL IN HERE *)
+  | <{let y = t1 in t2}> =>
+  if String.eqb x y then t else <{let y = [x:=s] t1 in [x:=s] t2}>
+
   (* fix *)
-  (* FILL IN HERE *)
-  | _ => t  (* ... and delete this line when you finish the exercise *)
+  | <{fix t1}> =>
+    <{fix [x:=s] t1}>
+*)
+| _ => t  (* ... and delete this line when you finish the exercise *)
   end
 
 where "'[' x ':=' s ']' t" := (subst x s t) (in custom stlc).
@@ -1263,11 +1273,40 @@ Inductive step : tm -> tm -> Prop :=
   (* Add rules for the following extensions. *)
 
   (* pairs *)
-  (* FILL IN HERE *)
+  | ST_Pair1 : forall t1 t1' t2,
+         t1 --> t1' ->
+         <{(t1, t2)}> --> <{(t1', t2)}>
+  | ST_Pair2 : forall t1 t2 t2',
+         value t1 ->
+         t2 --> t2' ->
+         <{(t1, t2)}> --> <{(t1, t2')}>
+  | ST_Fst : forall t t',
+         t --> t' ->
+         <{t.fst}> --> <{t'.fst}>
+  | ST_Snd : forall t t',
+         t --> t' ->
+         <{t.snd}> --> <{t'.snd}>
+  | ST_FstPair : forall v1 v2,
+       value v1 ->
+       value v2 ->
+       <{(v1, v2).fst}> --> v1
+  | ST_SndPair : forall v1 v2,
+       value v1 ->
+       value v2 ->
+       <{(v1, v2).snd}> --> v2
+
   (* let *)
-  (* FILL IN HERE *)
+  | ST_Let : forall x t1 t1' t2,
+         t1 --> t1' ->
+         <{let x = t1 in t2}> --> <{let x = t1' in t2}>
+  | ST_LetValue : forall x v1 t2,
+         value v1 ->
+         <{let x = v1 in t2}> --> <{[x:=v1]t2}>
+(*
   (* fix *)
-  (* FILL IN HERE *)
+  | ST_Fix : forall t1,
+         <{fix t1}> --> <{[x:=fix t1]t1}>
+*)
 
   where "t '-->' t'" := (step t t').
 
@@ -1350,11 +1389,30 @@ Inductive has_type : context -> tm -> ty -> Prop :=
   (* Add rules for the following extensions. *)
 
   (* pairs *)
-  (* FILL IN HERE *)
+  | T_Pair : forall Gamma t1 t2 T1 T2,
+      Gamma |- t1 \in T1 ->
+      Gamma |- t2 \in T2 ->
+      Gamma |- (t1, t2) \in (T1 * T2)
+
+  | T_Fst : forall Gamma t T1 T2,
+      Gamma |- t \in (T1 * T2) ->
+      Gamma |- (t .fst) \in T1
+
+  | T_Snd : forall Gamma t T1 T2,
+      Gamma |- t \in (T1 * T2) ->
+      Gamma |- (t .snd) \in T2
+
   (* let *)
-  (* FILL IN HERE *)
+  | T_Let : forall Gamma x t1 T1 t2 T2,
+      Gamma |- t1 \in T1 ->
+      (x |-> T1 ; Gamma) |- t2 \in T2 ->
+      Gamma |- let x = t1 in t2 \in T2
+(*
   (* fix *)
-  (* FILL IN HERE *)
+  | T_Fix : forall Gamma t1 T1,
+      Gamma |- t1 \in (T1 -> T1) ->
+      Gamma |- fix t1 \in T1
+*)
 
 where "Gamma '|-' t '\in' T" := (has_type Gamma t T).
 
@@ -1452,15 +1510,15 @@ Proof.
      to increase the max search depth of [auto] from the
      default 5 to 10. *)
   auto 10.
-(* FILL IN HERE *) Admitted.
+Qed.
 
 Example reduces :
   tm_test -->* 5.
 Proof.
-(* 
+
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+
+Qed.
 
 End Numtest.
 
@@ -1475,15 +1533,14 @@ Definition tm_test :=
 
 Example typechecks :
   empty |- tm_test \in Nat.
-Proof. unfold tm_test. eauto 15. (* FILL IN HERE *) Admitted.
+Proof. unfold tm_test. eauto 15.
+Qed.
 
 Example reduces :
   tm_test -->* 6.
 Proof.
-(* 
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End ProdTest.
 
@@ -1500,15 +1557,13 @@ Definition tm_test :=
 Example typechecks :
   empty |- tm_test \in Nat.
 Proof. unfold tm_test. eauto 15.
-(* FILL IN HERE *) Admitted.
+Qed.
 
 Example reduces :
   tm_test -->* 6.
 Proof.
-(* 
-  unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+unfold tm_test. normalize.
+Qed.
 
 End LetTest.
 
@@ -1524,15 +1579,14 @@ Definition tm_test :=
 
 Example typechecks :
   empty |- tm_test \in Nat.
-Proof. unfold tm_test. eauto 15. (* FILL IN HERE *) Admitted.
+Proof. unfold tm_test. eauto 15.
+Qed.
 
 Example reduces :
   tm_test -->* 5.
 Proof.
-(* 
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End Sumtest1.
 
@@ -1555,7 +1609,7 @@ Definition tm_test :=
 
 Example typechecks :
   empty |- tm_test \in (Nat * Nat).
-Proof. unfold tm_test. eauto 15. (* FILL IN HERE *) Admitted.
+Proof. unfold tm_test. (* eauto 15. *) (* FILL IN HERE *) Admitted.
 
 Example reduces :
   tm_test -->* <{(5, 0)}>.
@@ -1732,7 +1786,7 @@ Definition eotest :=
 
 Example typechecks :
   empty |- eotest \in (Nat * Nat).
-Proof. unfold eotest. eauto 30. (* FILL IN HERE *) Admitted.
+Proof. unfold eotest. (* eauto 30. *) (* FILL IN HERE *) Admitted.
 
 Example reduces :
   eotest -->* <{(0, 1)}>.
