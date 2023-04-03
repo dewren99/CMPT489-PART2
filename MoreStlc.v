@@ -1136,10 +1136,10 @@ Fixpoint subst (x : string) (s : tm) (t : tm) : tm :=
   (* pairs *)
   | <{(t1, t2)}> =>
   <{( [x:=s] t1, [x:=s] t2 )}>
-  | tm_fst t1 =>
-      <{ [x:=s] t1 }>
-  | tm_snd t2 =>
-      <{ [x:=s] t2 }>
+  | <{t.fst}> =>
+      <{([x:=s] t).fst}>
+  | <{t.snd}> =>
+      <{([x:=s] t).snd}>
 
   (* let *)
   | <{let y = t1 in t2}> =>
@@ -1413,6 +1413,7 @@ Inductive has_type : context -> tm -> ty -> Prop :=
   | T_Fix : forall Gamma t1 T1,
       Gamma |- t1 \in (T1 -> T1) ->
       Gamma |- fix t1 \in T1
+
 
 where "Gamma '|-' t '\in' T" := (has_type Gamma t T).
 
@@ -1784,11 +1785,8 @@ Qed.
 Example reduces :
   eotest -->* <{(0, 1)}>.
 Proof.
-(*
   unfold eotest. eauto 10. normalize.
 Qed.
-*)
-Admitted.
 
 End FixTest4.
 End Examples.
@@ -2071,7 +2069,9 @@ Proof with eauto.
         rewrite (update_permute _ _ _ _ _ _ n0) in H9.
         rewrite (update_permute _ _ _ _ _ _ n) in H9.
         assumption.
-
+(*
+  - rename t into t1. apply IHt. apply T_Fst in H2.
+*)
   (* Complete the proof. *)
 
   (* FILL IN HERE *) Admitted.
