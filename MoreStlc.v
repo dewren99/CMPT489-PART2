@@ -2069,9 +2069,13 @@ Proof with eauto.
         rewrite (update_permute _ _ _ _ _ _ n0) in H9.
         rewrite (update_permute _ _ _ _ _ _ n) in H9.
         assumption.
-(*
-  - rename t into t1. apply IHt. apply T_Fst in H2.
-*)
+
+  - rename s into y. destruct (eqb_spec x y); subst.
+    + (* x=y *)
+      rewrite update_shadow in *.
+      eapply T_Let...
+      apply IHt1 in H5.
+
   (* Complete the proof. *)
 
   (* FILL IN HERE *) Admitted.
@@ -2118,13 +2122,17 @@ Proof with eauto.
 
   (* Complete the proof. *)
 
+
   (* fst and snd *)
-  (* FILL IN HERE *)
+  - inversion HT; subst. assumption.
+  - inversion HT; subst. assumption.
   (* let *)
-  (* FILL IN HERE *)
+  - apply substitution_preserves_typing with T1...
   (* fix *)
-  (* FILL IN HERE *)
-(* FILL IN HERE *) Admitted.
+  -  
+    apply substitution_preserves_typing with T1...
+    inversion HT. assumption.
+Qed.
 
 (** [] *)
 
