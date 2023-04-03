@@ -1140,7 +1140,7 @@ Fixpoint subst (x : string) (s : tm) (t : tm) : tm :=
       <{ [x:=s] t1 }>
   | tm_snd t2 =>
       <{ [x:=s] t2 }>
-(*
+
   (* let *)
   | <{let y = t1 in t2}> =>
   if String.eqb x y then t else <{let y = [x:=s] t1 in [x:=s] t2}>
@@ -1148,8 +1148,7 @@ Fixpoint subst (x : string) (s : tm) (t : tm) : tm :=
   (* fix *)
   | <{fix t1}> =>
     <{fix [x:=s] t1}>
-*)
-| _ => t  (* ... and delete this line when you finish the exercise *)
+
   end
 
 where "'[' x ':=' s ']' t" := (subst x s t) (in custom stlc).
@@ -1302,11 +1301,13 @@ Inductive step : tm -> tm -> Prop :=
   | ST_LetValue : forall x v1 t2,
          value v1 ->
          <{let x = v1 in t2}> --> <{[x:=v1]t2}>
-(*
+
   (* fix *)
-  | ST_Fix : forall t1,
-         <{fix t1}> --> <{[x:=fix t1]t1}>
-*)
+  | ST_FixAbs : forall x T t1,
+         <{fix (\x:T, t1)}> --> <{ [x:=fix (\x:T, t1)]t1 }>
+  | ST_FixApp : forall t1 t1',
+      t1 --> t1' ->
+      <{fix t1}> --> <{fix t1'}>
 
   where "t '-->' t'" := (step t t').
 
@@ -1407,12 +1408,11 @@ Inductive has_type : context -> tm -> ty -> Prop :=
       Gamma |- t1 \in T1 ->
       (x |-> T1 ; Gamma) |- t2 \in T2 ->
       Gamma |- let x = t1 in t2 \in T2
-(*
+
   (* fix *)
   | T_Fix : forall Gamma t1 T1,
       Gamma |- t1 \in (T1 -> T1) ->
       Gamma |- fix t1 \in T1
-*)
 
 where "Gamma '|-' t '\in' T" := (has_type Gamma t T).
 
@@ -1609,15 +1609,13 @@ Definition tm_test :=
 
 Example typechecks :
   empty |- tm_test \in (Nat * Nat).
-Proof. unfold tm_test. (* eauto 15. *) (* FILL IN HERE *) Admitted.
+Proof. unfold tm_test. eauto 15. Qed.
 
 Example reduces :
   tm_test -->* <{(5, 0)}>.
 Proof.
-(* 
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End Sumtest2.
 
@@ -1639,15 +1637,14 @@ Definition tm_test :=
 
 Example typechecks :
   empty |- tm_test \in Nat.
-Proof. unfold tm_test. eauto 20. (* FILL IN HERE *) Admitted.
+Proof. unfold tm_test. eauto 20.
+Qed.
 
 Example reduces :
   tm_test -->* 25.
 Proof.
-(* 
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End ListTest.
 
@@ -1671,15 +1668,14 @@ Definition fact :=
 
 Example typechecks :
   empty |- fact \in (Nat -> Nat).
-Proof. unfold fact. auto 10. (* FILL IN HERE *) Admitted.
+Proof. unfold fact. auto 10.
+Qed.
 
 Example reduces :
   <{fact 4}> -->* 24.
 Proof.
-(* 
   unfold fact. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End FixTest1.
 
@@ -1705,16 +1701,15 @@ Definition map :=
 Example typechecks :
   empty |- map \in
     ((Nat -> Nat) -> ((List Nat) -> (List Nat))).
-Proof. unfold map. auto 10. (* FILL IN HERE *) Admitted.
+Proof. unfold map. auto 10.
+Qed.
 
 Example reduces :
   <{map (\a:Nat, succ a) (1 :: 2 :: (nil Nat))}>
   -->* <{2 :: 3 :: (nil Nat)}>.
 Proof.
-(* 
   unfold map. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End FixTest2.
 
@@ -1739,24 +1734,21 @@ Definition equal :=
 
 Example typechecks :
   empty |- equal \in (Nat -> Nat -> Nat).
-Proof. unfold equal. auto 10. (* FILL IN HERE *) Admitted.
+Proof. unfold equal. auto 10.
+Qed.
 
 Example reduces :
   <{equal 4 4}> -->* 1.
 Proof.
-(* 
   unfold equal. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 (* GRADE_THEOREM 0.25: reduces *)
 
 Example reduces2 :
   <{equal 4 5}> -->* 0.
 Proof.
-(* 
   unfold equal. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 (* GRADE_THEOREM 0.25: reduces2 *)
 
 End FixTest3.
@@ -1786,15 +1778,17 @@ Definition eotest :=
 
 Example typechecks :
   empty |- eotest \in (Nat * Nat).
-Proof. unfold eotest. (* eauto 30. *) (* FILL IN HERE *) Admitted.
+Proof. unfold eotest. eauto 30.
+Qed.
 
 Example reduces :
   eotest -->* <{(0, 1)}>.
 Proof.
-(* 
+(*
   unfold eotest. eauto 10. normalize.
+Qed.
 *)
-(* FILL IN HERE *) Admitted.
+Admitted.
 
 End FixTest4.
 End Examples.
