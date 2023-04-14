@@ -646,6 +646,9 @@ Definition manual_grade_for_proper_subtypes : option (nat*string) := None.
 
    - What is the _largest_ type [T] that makes the same assertion true?
 
+The smallest type T is A.
+The largest type T is Top.
+
 *)
 
 (* Do not modify the following line: *)
@@ -659,6 +662,9 @@ Definition manual_grade_for_small_large_1 : option (nat*string) := None.
        empty |- (\p:(A->A * B->B). p) ((\z:A.z), (\z:B.z)) \in T
 
    - What is the _largest_ type [T] that makes the same assertion true?
+
+The smallest type T is the pair (A->A * B->B).
+The largest type T is the pair Top.
 
 *)
 
@@ -688,6 +694,9 @@ Definition manual_grade_for_small_large_2 : option (nat*string) := None.
    - What is the _largest_ type [T] that makes the same
      assertion true?
 
+The smallest type T is (A -> T).
+The largest type T is Top.
+
 *)
 
 (* Do not modify the following line: *)
@@ -701,6 +710,8 @@ Definition manual_grade_for_small_large_4 : option (nat*string) := None.
 
       exists S t,
         empty |- (\x:T. x x) t \in S
+
+No smallest type T exists in STLC.
 *)
 
 (* Do not modify the following line: *)
@@ -713,6 +724,9 @@ Definition manual_grade_for_smallest_1 : option (nat*string) := None.
     assertion true?
 
       empty |- (\x:Top. x) ((\z:A.z) , (\z:B.z)) \in T
+
+The smallest type T is (A -> A) * (B -> B).
+
 *)
 
 (* Do not modify the following line: *)
