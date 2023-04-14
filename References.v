@@ -517,7 +517,33 @@ Notation "t1 ; t2" := (tseq t1 t2) (in custom stlc at level 3).
 
 would it behave the same? *)
 
-(* FILL IN HERE *)
+(* 
+
+No, this definition captures the current value of the reference 
+a at the time of the update function's definition, 
+rather than the time of its execution. 
+This would cause issues when the array is updated multiple times.
+
+let a = newarray unit in
+let _ = update a 0 42 in
+let _ = update a 1 24 in
+lookup a 0
+
+With the original definition of update, the lookup would return 42. 
+However, with the more compact definition of update, the lookup would return 0.
+
+In the compact definition, the update for index 1 captures the original 
+function (\n:Nat. 0) and does not consider the update for index 0. 
+This is because the reference a is dereferenced within the lambda 
+function definition instead of at the time of the update, 
+causing the updates to overwrite each other.
+
+The original definition, on the other hand, stores the old function in a 
+local variable oldf before updating the reference a. This ensures that 
+subsequent updates take into account the previous updates, 
+and the behavior is as expected.
+
+*)
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_compact_update : option (nat*string) := None.
@@ -574,7 +600,32 @@ Definition manual_grade_for_compact_update : option (nat*string) := None.
 
     Show how this can lead to a violation of type safety. *)
 
-(* FILL IN HERE *)
+(*
+
+let r1 = ref Nat in
+  r1 := 42;
+  let r2 = ref Bool in
+    free r1;  // Deallocate the storage cell for r1
+    r2 := true;  // Potentially reusing the same storage cell
+    let n: Nat = !r1 in  // r1 is a dangling reference
+      let b: Bool = !r2 in
+        ...
+
+Here, we allocate a storage cell of type Nat and bind its reference to r1. 
+Then, we allocate a storage cell of type Bool and bind its reference to r2. 
+Next, we deallocate the storage cell referenced by r1.
+The memory manager might reuse the same storage cell for r2.
+
+At this point, both r1 and r2 point to the same storage cell. 
+However, r1 has type Ref Nat, while r2 has type Ref Bool.
+This can lead to a type safety violation when we attempt 
+to dereference r1 (which is now a dangling reference)
+and assign its value to n, which has type Nat. 
+Since the storage cell now contains a Bool value,
+the assignment is not type-safe, and it might 
+lead to runtime errors or undefined behavior.
+
+*)
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_type_safety_violation : option (nat*string) := None.
@@ -1051,7 +1102,7 @@ Theorem cyclic_store:
     t / nil -->*
     <{ unit }> / (<{ \x:Nat, (!(loc 1)) x }> :: <{ \x:Nat, (!(loc 0)) x }> :: nil).
 Proof.
-  (* FILL IN HERE *) Admitted.
+Admitted.
 (** [] *)
 
 (** These problems arise from the fact that our proposed
