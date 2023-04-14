@@ -1165,7 +1165,20 @@ Proof with eauto.
   intros U V1 V2 Hs.
   remember <{V1->V2}> as V.
   generalize dependent V2. generalize dependent V1.
-  (* FILL IN HERE *) Admitted.
+  (* FILL IN HERE *)
+induction Hs; intros V1 V2 HeqV; try solve_by_invert.
+- rewrite HeqV; intros; subst. exists V1, V2. split; eauto.
+- apply IHHs2 in HeqV. destruct HeqV as [U1 [U2 [HeqU Hsub1]]].
+  apply IHHs1 in HeqU. destruct HeqU as [W1 [W2 [HeqW Hsub2]]].
+  subst. exists W1, W2. split; eauto.
+  destruct Hsub1 as [Hsub1L Hsub1R].
+  destruct Hsub2 as [Hsub2L Hsub2R].
+  split.
+  eapply S_Trans; eauto.
+  eapply S_Trans; eauto.
+- injection HeqV; intros; subst. exists S1, S2. split; eauto.
+Qed.
+
 (** [] *)
 
 (** There are additional _inversion lemmas_ for the other types:
@@ -1614,26 +1627,42 @@ Qed.
                     S1 <: T1     T1 <: S1      S2 <: T2
                     -----------------------------------    (T_Funny1)
                            Gamma |- t \in T1->T2
+Progress and Preservation remains true.
 
     - Suppose we add the following reduction rule:
 
                              --------------------         (ST_Funny21)
                              unit --> (\x:Top. x)
+Progress is false. According to the new rule, it can take a step to (\x:Top. x). 
+However, unit is a value, so it should not be reducible. 
 
     - Suppose we add the following subtyping rule:
 
                                ----------------          (S_Funny3)
                                Unit <: Top->Top
+Preservation is broken. Consider the term (\x:Unit. x). 
+It has the type Unit -> Unit. 
+Now, according to the new subtyping rule, Unit -> Unit is a subtype of Top -> Top. 
+If we apply the term to unit (i.e., (\x:Unit. x) unit), the result is unit, which 
+has type Unit. However, the result should have the type Top.
 
     - Suppose we add the following subtyping rule:
 
                                ----------------          (S_Funny4)
                                Top->Top <: Unit
+Preservation is broken. Consider the term (\x:Top. x). It has the type Top -> Top. 
+According to the new rule, Top -> Top is a subtype of Unit. 
+If we apply the term to unit (i.e., (\x:Top. x) unit), the result is unit, 
+which has type Unit. However, the result should have the type Top -> Top
 
     - Suppose we add the following reduction rule:
 
                              ---------------------      (ST_Funny5)
                              (unit t) --> (t unit)
+Progress is broken. Consider the term unit unit. 
+According to the new rule, it can take a step to unit. 
+However, the term unit unit is not typable in the 
+original system, so Progress breaks. 
 
     - Suppose we add the same reduction rule _and_ a new typing rule:
 
@@ -1642,12 +1671,21 @@ Qed.
 
                            --------------------------    (T_Funny6)
                            empty |- unit \in Top->Top
+Both Progress and Preservation are broken. With the addition of the typing rule, 
+the term unit unit is now typable. However, according to the new reduction rule, 
+it can take a step to unit, which has type Unit, not Top -> Top. This breaks Preservation. 
 
     - Suppose we _change_ the arrow subtyping rule to:
 
                           S1 <: T1 S2 <: T2
                           -----------------              (S_Arrow')
                           S1->S2 <: T1->T2
+Preservation is broken. Consider the term (\x:Top. x). 
+It has the type Top -> Top. According to the new 
+rule, Top -> Top is a subtype of Unit -> Top. 
+If we apply the term to unit (i.e., (\x:Top. x) unit), 
+the result is unit, which has type Unit. 
+However, the result should have the type Top
 
 *)
 
@@ -1687,6 +1725,52 @@ Definition manual_grade_for_variations : option (nat*string) := None.
       need to add a couple of completely new lemmas.) *)
 
 (* FILL IN HERE *)
+
+(*
+  | v_pair : forall v1 v2,
+      value v1 ->
+      value v2 ->
+      value (tpair v1 v2)
+
+
+  | ST_Fst : forall t1 t2,
+      t1 ==> t1' ->
+      (tfst (tpair t1 t2)) ==> t1'
+
+  | ST_Snd : forall t1 t2,
+      t2 ==> t2' ->
+      (tsnd (tpair t1 t2)) ==> t2'
+
+  | ST_FstPair : forall v1 v2,
+      value v1 ->
+      value v2 ->
+      (tfst (tpair v1 v2)) ==> v1
+
+  | ST_SndPair : forall v1 v2,
+      value v1 ->
+      value v2 ->
+      (tsnd (tpair v1 v2)) ==> v2
+
+
+  | T_Pair : forall Gamma t1 t2 T1 T2,
+      Gamma |- t1 \in T1 ->
+      Gamma |- t2 \in T2 ->
+      Gamma |- tpair t1 t2 \in TProd T1 T2
+
+  | T_Fst : forall Gamma t T1 T2,
+      Gamma |- t \in TProd T1 T2 ->
+      Gamma |- tfst t \in T1
+
+  | T_Snd : forall Gamma t T1 T2,
+      Gamma |- t \in TProd T1 T2 ->
+      Gamma |- tsnd t \in T2
+
+
+  | S_Prod : forall S1 S2 T1 T2,
+      S1 <: T1 ->
+      S2 <: T2 ->
+      TProd S1 S2 <: TProd T1 T2
+*)
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_products_value_step : option (nat*string) := None.
