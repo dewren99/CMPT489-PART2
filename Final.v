@@ -224,7 +224,23 @@ Question 4: Define the tm_tme_analogue inductive proposition
 *)
 
 Inductive tm_tme_analogue : tm -> tme -> Prop :=
-  (*Fill in here*)
+  | tm_tme_tru : tm_tme_analogue tru etru
+  | tm_tme_fls : tm_tme_analogue fls efls
+  | tm_tme_ite : forall t1 t2 t3 tme1 tme2 tme3,
+      tm_tme_analogue t1 tme1 ->
+      tm_tme_analogue t2 tme2 ->
+      tm_tme_analogue t3 tme3 ->
+      tm_tme_analogue (ite t1 t2 t3) (eite tme1 tme2 tme3)
+  | tm_tme_zro : tm_tme_analogue zro ezro
+  | tm_tme_scc : forall t tme1,
+      tm_tme_analogue t tme1 ->
+      tm_tme_analogue (scc t) (escc tme1)
+  | tm_tme_prd : forall t tme1,
+      tm_tme_analogue t tme1 ->
+      tm_tme_analogue (prd t) (eprd tme1)
+  | tm_tme_iszro : forall t tme1,
+      tm_tme_analogue t tme1 ->
+      tm_tme_analogue (iszro t) (eiszro tme1)
   .
 
 (**
@@ -234,7 +250,15 @@ Question 5: Prove tm_tme_analogue is equivalent to tm_to_tme
 Theorem definition_equivalence : forall t t',
         tm_to_tme t = t' <-> tm_tme_analogue t t'.
 Proof.
-Admitted.
+split.
+- intros H. generalize dependent t'.
+  induction t; 
+  intros t' H; simpl in H; try reflexivity; subst; constructor; auto.
+- intros H. 
+  induction H; 
+  simpl; try reflexivity; try rewrite IHtm_tme_analogue; try reflexivity.
+  rewrite IHtm_tme_analogue1, IHtm_tme_analogue2, IHtm_tme_analogue3; auto.
+Qed.
 
 Inductive multiestep : tme -> tme -> Prop :=
   | multi_erefl : forall t, multiestep t t
