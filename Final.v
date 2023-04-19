@@ -277,6 +277,7 @@ Notation "t1 '~~>*' t2" := (multiestep t1 t2) (at level 40).
     progress, preservation, and type safety. This proof will be easier
     if you use them.
 *)
+
 Theorem well_typed_terms_dont_error :
         forall t t' tf T,
         |- t \in T ->
@@ -284,6 +285,12 @@ Theorem well_typed_terms_dont_error :
         t' ~~>* tf ->
         tf <> eerror.
 Proof.
+  intros.
+  revert t H H0.
+  induction H1; intros.
+  - rewrite <- H0. apply definition_equivalence in H0.
+    induction H0; intro Hcontra; inversion Hcontra.
+  - apply IHmultiestep with (t := t); auto.
 Admitted.
 
 End TME.
@@ -313,7 +320,8 @@ From Coq Require Import Strings.String.
 
 Inductive ty : Type :=
   | Ty_Bool  : ty
-  | Ty_Arrow : ty -> ty -> ty.
+  | Ty_Arrow : ty -> ty -> ty
+  | Ty_Tuple : list ty -> ty.
 
 (* ================================================================= *)
 (** ** Terms *)
@@ -324,7 +332,11 @@ Inductive tm : Type :=
   | tm_abs   : string -> ty -> tm -> tm
   | tm_true  : tm
   | tm_false : tm
-  | tm_if    : tm -> tm -> tm -> tm.
+  | tm_if    : tm -> tm -> tm -> tm
+(*
+  | tm_tuple : list tm -> tm
+*)
+.
 
 Declare Custom Entry stlc.
 Notation "<{ e }>" := e (e custom stlc at level 99).
@@ -351,6 +363,7 @@ Notation "'true'"  := tm_true (in custom stlc at level 0).
 Notation "'false'"  := false (at level 1).
 Notation "'false'"  := tm_false (in custom stlc at level 0).
 
+
 Inductive value : tm -> Prop :=
   | v_abs : forall x T2 t1,
       value <{\x:T2, t1}>
@@ -358,6 +371,9 @@ Inductive value : tm -> Prop :=
       value <{true}>
   | v_false :
       value <{false}>.
+(*
+  | v_tuple : forall ts,
+      (forall t, nth t ts -> value t) -> value <{tm_tuple ts}>. *)
 
 Reserved Notation "'[' x ':=' s ']' t" (in custom stlc at level 20, x constr).
 
@@ -455,13 +471,22 @@ Which of the following properties would be held, and which would
 not be held. Justify your answers.
 
 Progress?
+Progress doesn't hold.
+A counter example would be String <: String + Nat.
+String is sub type of String + Nat. However,
+no String value exists such that it is the type of String + Nat.
 
 
 Preservation?
+Preservation still holds.
+The new rule doesn't affect the relationship between types
+when it takes a step.
 
 
 Determinism of small step evaluation?
-
+Determinism of small step evaluation still holds.
+The new rule doesn't affect the number of possible
+outputs.
 
 
 
