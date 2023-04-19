@@ -471,10 +471,10 @@ Which of the following properties would be held, and which would
 not be held. Justify your answers.
 
 Progress?
-Progress doesn't hold.
-A counter example would be String <: String + Nat.
-String is sub type of String + Nat. However,
-no String value exists such that it is the type of String + Nat.
+Progress still holds.
+The new rule doesn't effect the evaluation process nor
+well-typeness.
+
 
 
 Preservation?
@@ -484,9 +484,11 @@ when it takes a step.
 
 
 Determinism of small step evaluation?
-Determinism of small step evaluation still holds.
-The new rule doesn't affect the number of possible
-outputs.
+Determinism of small step evaluation doesn't hold.
+The new rule introduces non-determinisim. a term 
+can have both types A and A+B, allowing it to
+potentially have two different types during case/pattern
+evaluations.
 
 
 
@@ -505,6 +507,8 @@ Question 8:
 
     (5) [S -> {i1:U,i2:V} <: S -> {i2:V,i1:U}]
 
+Assertion (2) is false.
+
 
 Question 9:
     Suppose we have  [S <: T] and [U <: V].  Which of the following
@@ -519,6 +523,8 @@ Question 9:
     (4) [{i1:T,i2:V,i3:V} <: {i1:S,i2:U} * {i3:V}]
 
     (5) [Top -> {i1:U,i2:V} <: {i1:S} -> {i2:V,i1:V}]
+
+Assertion (4) is false.
 
 *)
 
